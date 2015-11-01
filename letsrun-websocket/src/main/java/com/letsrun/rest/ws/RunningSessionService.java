@@ -18,9 +18,10 @@ import org.atmosphere.jersey.JerseyBroadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.letsrun.business.UserAtResourceHandler;
-import com.letsrun.dto.BroadcastProtocol;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.letsrun.dto.RunSessionBroadcastProtocol;
 import com.letsrun.util.AtmosphereUtil;
+import com.letsrun.util.ObjectMapperUtil;
 
 @Path("/")
 @AtmosphereService(broadcaster = JerseyBroadcaster.class)
@@ -31,23 +32,25 @@ public class RunningSessionService {
 	@Context
 	private Broadcaster broadcaster;
 
-	private UserAtResourceHandler userAtResourceHandler = UserAtResourceHandler.getUserAtResourceHandler();
-
 	@GET
 	@Path("login/{login}")
 	@Suspend(contentType = "application/json", listeners = { OnDisconnect.class })
 	public String suspend(@PathParam("login") String login, @Context AtmosphereResource r) {
 		logger.info("Browser {} connected.", r.uuid());
-		userAtResourceHandler.addAtmosphereResource(login, r.uuid());
+		// FIXME userAtResourceHandler.addAtmosphereResource(login, r.uuid());
 		return "";
 	}
 
 	@POST
 	@Path("broadcast")
-	public void broadcast(BroadcastProtocol broadcastProtocol) {
+	public void broadcast(RunSessionBroadcastProtocol broadcastProtocol) {
 		// braodcast messages to client getted from services
 		Set<AtmosphereResource> resources = AtmosphereUtil.findAtmosphereResource(broadcastProtocol.getReceivers());
-		broadcaster.broadcast(broadcastProtocol.getMessage(), resources);
+		try {
+			broadcaster.broadcast(ObjectMapperUtil.build().writeValueAsString(broadcastProtocol), resources);
+		} catch (JsonProcessingException e) {
+			logger.error("Error while broad casting", e);
+		}
 	}
 
 	public static final class OnDisconnect extends AtmosphereResourceEventListenerAdapter {

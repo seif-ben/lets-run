@@ -10,7 +10,11 @@
 	<packaging>war</packaging>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>com.letsrun</groupId>
+			<artifactId>letsrun-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.atmosphere</groupId>
 			<artifactId>atmosphere-jersey</artifactId>

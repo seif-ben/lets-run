@@ -1,16 +1,23 @@
 package com.letsrun.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
 public class User {
 
 	private String login;
 	private String password;
 	private String name;
+	private String uuid;
 
 	public User() {
 		super();
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public User(String login, String password, String name) {
