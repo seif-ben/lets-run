@@ -1,6 +1,7 @@
 package com.letsrun.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +11,7 @@ import org.atmosphere.cpr.AtmosphereFramework;
 import org.atmosphere.cpr.AtmosphereResource;
 import org.atmosphere.cpr.AtmosphereResourceFactory;
 import org.atmosphere.util.ServletContextFactory;
+import org.springframework.util.CollectionUtils;
 
 public abstract class AtmosphereUtil {
 
@@ -21,12 +23,15 @@ public abstract class AtmosphereUtil {
 	}
 
 	synchronized public static Set<AtmosphereResource> findAtmosphereResource(Collection<String> receivers) {
-		Set<AtmosphereResource> result = new HashSet<>();
-		for (String uuid : receivers) {
-			AtmosphereResource resource = getAtmosphereResourceFactory().find(uuid);
-			result.add(resource);
+		if (!CollectionUtils.isEmpty(receivers)) {
+			Set<AtmosphereResource> result = new HashSet<>(receivers.size());
+			for (String uuid : receivers) {
+				AtmosphereResource resource = getAtmosphereResourceFactory().find(uuid);
+				result.add(resource);
+			}
+			return result;
 		}
-		return result;
+		return Collections.emptySet();
 	}
 
 }

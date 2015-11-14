@@ -1,5 +1,6 @@
 package com.letsrun.rest.ws;
 
+import java.io.IOException;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -20,14 +21,16 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.letsrun.dto.RunSessionBroadcastProtocol;
+import com.letsrun.model.User;
 import com.letsrun.util.AtmosphereUtil;
 import com.letsrun.util.ObjectMapperUtil;
+import com.letsrun.util.RestClient;
 
 @Path("/")
 @AtmosphereService(broadcaster = JerseyBroadcaster.class)
 public class RunningSessionService {
 
-	private final static Logger logger = LoggerFactory.getLogger(RunningSessionService.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(RunningSessionService.class);
 
 	@Context
 	private Broadcaster broadcaster;
@@ -36,20 +39,24 @@ public class RunningSessionService {
 	@Path("login/{login}")
 	@Suspend(contentType = "application/json", listeners = { OnDisconnect.class })
 	public String suspend(@PathParam("login") String login, @Context AtmosphereResource r) {
-		logger.info("Browser {} connected.", r.uuid());
-		// FIXME userAtResourceHandler.addAtmosphereResource(login, r.uuid());
+		LOGGER.info("Browser {} connected.", r.uuid());
+		try {
+			RestClient.post("localhost:8080/",
+					ObjectMapperUtil.build().writeValueAsString(new User(login, "", r.uuid())));
+		} catch (IOException e) {
+			LOGGER.error("Error while trying to authenticate a user [{}]", login, e);
+		}
 		return "";
 	}
 
 	@POST
 	@Path("broadcast")
 	public void broadcast(RunSessionBroadcastProtocol broadcastProtocol) {
-		// braodcast messages to client getted from services
 		Set<AtmosphereResource> resources = AtmosphereUtil.findAtmosphereResource(broadcastProtocol.getReceivers());
 		try {
 			broadcaster.broadcast(ObjectMapperUtil.build().writeValueAsString(broadcastProtocol), resources);
 		} catch (JsonProcessingException e) {
-			logger.error("Error while broad casting", e);
+			LOGGER.error("Error while broad casting", e);
 		}
 	}
 
@@ -58,9 +65,9 @@ public class RunningSessionService {
 		@Override
 		public void onDisconnect(AtmosphereResourceEvent event) {
 			if (event.isCancelled()) {
-				logger.info("Browser {} unexpectedly disconnected", event.getResource().uuid());
+				LOGGER.info("Browser {} unexpectedly disconnected", event.getResource().uuid());
 			} else if (event.isClosedByClient()) {
-				logger.info("Browser {} closed the connection", event.getResource().uuid());
+				LOGGER.info("Browser {} closed the connection", event.getResource().uuid());
 			}
 		}
 	}

@@ -21,4 +21,15 @@ public class UserDaoImpl {
 		return usersMap.get(login);
 	}
 
+	public void addSocketSession(User user) {
+		User knownUser = get(user.getLogin());
+		if (knownUser != null) {
+			knownUser.setUuid(user.getUuid());
+			save(knownUser);
+		}
+	}
+
+	public void save(User user) {
+		usersMap.put(user.getLogin(), user);
+	}
 }
