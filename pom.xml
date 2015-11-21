@@ -13,7 +13,7 @@
 		<client-version>2.2.11</client-version>
 		<logback-version>1.0.13</logback-version>
 		<jetty9-version>9.2.11.v20150529</jetty9-version>
-		<spring-version>3.2.15.RELEASE</spring-version>
+		<spring-version>4.2.3.RELEASE</spring-version>
 	</properties>
 
 	<dependencies>
@@ -21,11 +21,6 @@
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -70,11 +65,6 @@
 			<version>${logback-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>${jersey-version}</version>
-		</dependency>
-		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
 			<version>${logback-version}</version>
@@ -88,6 +78,16 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
 			<version>2.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<version>${jersey-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-bundle</artifactId>
+			<version>${jersey-version}</version>
 		</dependency>
 
 	</dependencies>
@@ -124,6 +124,21 @@
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>${jetty9-version}</version>
+				<configuration>
+					<contextHandlers>
+						<contextHandler
+							implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+							<war>${project.basedir}/letsrun-services/target/letsrun-services.war</war>
+							<contextPath>/letsrun-services</contextPath>
+							<descriptor></descriptor>
+						</contextHandler>
+						<contextHandler
+							implementation="org.eclipse.jetty.maven.plugin.JettyWebAppContext">
+							<war>${project.basedir}/letsrun-websocket/target/letsrun-websocket.war</war>
+							<contextPath>/letsrun-websocket</contextPath>
+						</contextHandler>
+					</contextHandlers>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -41,7 +41,7 @@ public class RunningSessionService {
 	public String suspend(@PathParam("login") String login, @Context AtmosphereResource r) {
 		LOGGER.info("Browser {} connected.", r.uuid());
 		try {
-			RestClient.post("localhost:8080/",
+			RestClient.post("http://localhost:8080/letsrun-services/services/login",
 					ObjectMapperUtil.build().writeValueAsString(new User(login, "", r.uuid())));
 		} catch (IOException e) {
 			LOGGER.error("Error while trying to authenticate a user [{}]", login, e);

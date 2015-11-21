@@ -13,7 +13,8 @@ public class BroadcastManager {
 
 	public void broadcast(RunSessionBroadcastProtocol message) {
 		try {
-			RestClient.post("localhost:8080/", ObjectMapperUtil.build().writeValueAsString(message));
+			RestClient.post("http://localhost:8080/letsrun-websocket/rest/broadcast",
+					ObjectMapperUtil.build().writeValueAsString(message));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

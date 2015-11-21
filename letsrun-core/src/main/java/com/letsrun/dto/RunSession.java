@@ -3,6 +3,8 @@ package com.letsrun.dto;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -10,6 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.joda.deser.DateTimeDeserializer;
 import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
 
+@XmlRootElement
 public class RunSession {
 
 	private String id;

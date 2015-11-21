@@ -2,6 +2,9 @@ package com.letsrun.dto;
 
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class RunSessionBroadcastProtocol {
 
 	private Set<RunSession> runSessions;
